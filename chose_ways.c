@@ -12,18 +12,7 @@
 
 #include "lem_in.h"
 
-//int		find_all_ways(t_into *hill)
-//{
-//	int		count;
-//	t_way	*way;
-//
-//
-//	count = 0;
-//
-//	return (count);
-//}
-
-int		detect_matches(t_way *way1, t_way *way2)
+int		detect_matches(t_way *way1, t_way *way2, t_into *hill)
 {
 	int i;
 	int j;
@@ -31,9 +20,15 @@ int		detect_matches(t_way *way1, t_way *way2)
 	i = 0;
 	while (way1->way && i < way1->w_len)
 	{
+		if (way1->way[i] == hill->start || way1->way[i] == hill->end)
+			i++;
+		if (i == way1->w_len)
+			return (0);
 		j = 0;
 		while (way2->way && j < way2->w_len)
 		{
+			if (way2->way[i] == hill->start || way2->way[i] == hill->end)
+				j++;
 			if (way1->way[i] == way2->way[j])
 				return (1);
 			j++;
@@ -43,104 +38,110 @@ int		detect_matches(t_way *way1, t_way *way2)
 	return (0);
 }
 
-//int 	is_parallel_way(int index, t_way **ways)
-//{
-//	if (detect_matches())
-//		return (0);
-//	return (1);
-//}
-
-int		add_parallel_way(t_into *hill, t_way *way)
+void	add_new_var(t_into *hill, int i)
 {
-	int	i;
-
-	i = 0;
-
+	if (hill->var_ways == NULL)
+		hill->var_ways = (t_var **)malloc(sizeof(t_var *) * hill->tmp_len);
+	hill->var_ways[i] = (t_var *)malloc(sizeof(t_var));
+	hill->var_ways[i]->indexes = (int *)malloc(sizeof(int) * hill->tmp_len);
+	hill->var_ways[i]->indexes[0] = i;
 
 }
 
-int 	add_new_var(t_into *hill, t_way *way)
-{
-
-}
-
-void	get_var_ways(t_into *hill)
+void	find_parallel_ways(t_into *hill)
 {
 	int	i;
 	int	j;
+	int k;
 
 	i = 0;
 	while (hill->tmp_ways && i < hill->tmp_len)
 	{
-		add_new_var(hill, hill->tmp_ways[i]);
+		add_new_var(hill, i);
 		j = 0;
+		k = 0;
 		while (j < hill->tmp_len)
 		{
 			if (i == j)
 				j++;
-			if (!detect_matches(hill->tmp_ways[i], hill->tmp_ways[j]))
-				add_parallel_way(hill, hill->tmp_ways[j]);
+			if (j == hill->tmp_len)
+				break ;
+			if (!detect_matches(hill->tmp_ways[i], hill->tmp_ways[j], hill))
+			{
+				k++;
+				hill->var_ways[i]->indexes[k] = j;
+			}
 			j++;
 		}
+		hill->var_ways[i]->length = k + 1;
 		i++;
 	}
 }
 
-
-
-
-
-
-void	get_all_posible_ways(t_into *hill)
+void	sort_ways(t_into *hill)
 {
 	int i;
 
-	find_ways(hill);
+	find_parallel_ways(hill);
 	i = 0;
-	while (hill->tmp_ways && hill->tmp_ways[i])
+	while (i < hill->tmp_len)
 	{
-		hill->tmp_ways[i]->matches = count_matches(i, hill->tmp_ways);
+		ft_bubble_sort(hill->var_ways[i]->indexes, hill->var_ways[i]->length);
 		i++;
 	}
-
 }
 
-
-
-
-
-
-int		find_shortest(t_into *hill)
+int		compare_ways(t_var *var1, t_var *var2)
 {
-	int		b;
-	int		best;
-	int		best_id;
-	int		j;
+	int i;
 
-	best = 1000000000;
-	j = 0;
-	best_id = 0;
-	while (hill->ways && hill->ways[j])
-	{
-		b = hill->ways[j]->w_len + hill->ways[j]->c_ants;
-		if (b < best)
-		{
-			best_id = j;
-			best = b;
-		}
-		j++;
-	}
-	return (best_id);
-}
-
-void	chose_ways(t_into *hill)
-{
-	int		i;
-
+	if (var1->length != var2->length)
+		return (0);
 	i = 0;
-	while (i < hill->ants)
+	while (i < var1->length)
 	{
-		hill->ways[find_shortest(hill)]->c_ants++;
+		if (var1->indexes[i] != var2->indexes[i])
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	choice_variants(t_into *hill)
+{
+	int i;
+	int j;
+
+	sort_ways(hill);
+	i = 0;
+	while (i < hill->tmp_len)
+	{
+		if (hill->var_ways[i] == NULL)
+		{
+			i++;
+			continue ;
+		}
+		if (i == hill->tmp_len)
+			break ;
+		j = 0;
+		while (j < hill->tmp_len)
+		{
+			if (j == i || hill->var_ways[j] == NULL)
+			{
+				j++;
+				continue ;
+			}
+			if (j == hill->tmp_len)
+				break ;
+			if (compare_ways(hill->var_ways[i], hill->var_ways[j]))
+			{
+				free(hill->var_ways[j]->indexes);
+				free(hill->var_ways[j]);
+				hill->var_ways[j] = NULL;
+			}
+
+			j++;
+		}
 		i++;
 	}
 }

@@ -40,7 +40,6 @@ typedef struct		s_way
 	int				*way;
 	int				w_len;
 	int				c_ants;
-	int 			matches;
 }					t_way;
 
 typedef struct 		s_ant
@@ -51,6 +50,12 @@ typedef struct 		s_ant
 
 }					t_ant;
 
+typedef struct		s_var
+{
+	int 			*indexes;
+	int 			length;
+}					t_var;
+
 typedef struct		s_into
 {
 	int				ants;
@@ -59,10 +64,10 @@ typedef struct		s_into
 	int				end;
 	t_room			**rooms;
 	t_link			**links;
-	t_way			**ways;
+//	t_way			**ways;
 	t_way			**tmp_ways;
 	int 			tmp_len;
-	t_way			***var_ways;
+	t_var			**var_ways;
 	t_ant			**ants_move;
 	int				**matrix;
 	int				m_len;
@@ -76,12 +81,11 @@ int					cmp_n(t_into *hill, char *string);
 int					parser(t_into *hill);
 void				fill_matrix(t_into *hill);
 void				find_ways(t_into *hill);
-//int					add_way(t_into *hill, t_way *way);
-void				remove_way_from_matrix(t_into *hill, t_way *way);
-int					find_all_ways(t_into *hill);
-int					find_shortest(t_into *hill);
-void				chose_ways(t_into *hill);
-int					push_ants(t_into *hill);
-void				free_memory(t_into *hill);
+void				find_parallel_ways(t_into *hill);
+//void				sort_ways(t_into *hill);
+void				choice_variants(t_into *hill);
+
+//int					push_ants(t_into *hill);
+//void				free_memory(t_into *hill);
 
 #endif

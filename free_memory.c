@@ -62,9 +62,20 @@ static void		free_matrix(t_into *hill)
 	hill->matrix = NULL;
 }
 
+static void		free_tmp_ways(t_into *hill)
+{
+
+}
+
+static void		free_var_ways(t_into *hill)
+{
+
+}
+
 void	free_memory(t_into *hill)
 {
 	free_data(hill);
 	free_rooms_links(hill);
 	free_matrix(hill);
 }
+

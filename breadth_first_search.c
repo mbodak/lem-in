@@ -31,7 +31,6 @@ int		save_way(t_into *hill, int *w, int l)
 	new_way = (t_way *)malloc(sizeof(t_way));
 	new_way->way = (int *)malloc(sizeof(int) * (l + 1));
 	new_way->c_ants  = 0;
-	new_way->matches = 0;
 	new_way->w_len = 0;
 	ways[len + 1] = NULL;
 	while (new_way->w_len <= l)
@@ -43,7 +42,7 @@ int		save_way(t_into *hill, int *w, int l)
 	if (hill->tmp_ways)
 		free(hill->tmp_ways);
 	hill->tmp_ways = ways;
-	return (len);
+	return (len + 1);
 }
 
 void		bfs(int v, t_into *hill, int rear, int *stack, int *visited)
@@ -74,54 +73,4 @@ void		find_ways(t_into *hill)
 	ft_memset(visited, 0, ((size_t)hill->m_len * sizeof(int)));
 	hill->tmp_ways = NULL;
 	bfs(hill->start, hill, 0, stack, visited);
-}
-
-
-
-
-//
-//int			add_way(t_into *hill, t_way *way)
-//{
-//	t_way	**ways;
-//	int		len;
-//
-//	len = 0;
-//
-//	while (hill->ways && hill->ways[len])
-//		len++;
-//	ways = (t_way **)malloc(sizeof(t_way *) * (len + 2));
-//	len = 0;
-//	while (hill->ways && hill->ways[len])
-//	{
-//		ways[len] = hill->ways[len];
-//		len++;
-//	}
-//	ways[len] = way;
-//	ways[len + 1] = NULL;
-//	if (hill->ways)
-//		free(hill->ways);
-//	hill->ways = ways;
-//	return (len);
-//}
-
-void		remove_way_from_matrix(t_into *hill, t_way *way)
-{
-	int		i;
-	int		j;
-
-	i = 0;
-	while (i < way->w_len)
-	{
-		if (way->way[i] != hill->start && way->way[i] != hill->end)
-		{
-			j = 0;
-			while (j < hill->m_len)
-			{
-				hill->matrix[j][way->way[i]] = 0;
-				hill->matrix[way->way[i]][j] = 0;
-				j++;
-			}
-		}
-		i++;
-	}
 }

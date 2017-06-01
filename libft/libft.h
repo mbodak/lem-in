@@ -104,5 +104,6 @@ char				*ft_joinfree(char *str1, char *str2, t_del string);
 char				*ft_readfd(int fd);
 int					get_next_line(const int fd, char **line);
 int					ft_printf(const char *restrict format, ...);
+void				ft_bubble_sort(int *arr, int n);
 
 #endif
