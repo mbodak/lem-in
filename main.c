@@ -71,7 +71,7 @@ void	print_ways(t_into *hill)
 	i = 0;
 	while (hill->tmp_ways[i])
 	{
-		ft_printf("WAY %d\n", i + 1);
+		ft_printf("WAY %d\n", i);
 		ft_printf("{\n");
 		j = 0;
 		ft_printf("\tway: ");
@@ -99,7 +99,7 @@ void	print_var(t_into *hill)
 	{
 		if (hill->var_ways[i])
 		{
-			ft_printf("VAR WAY %d\n", i + 1);
+			ft_printf("VAR WAY %d\n", i);
 			ft_printf("{\n");
 			j = 0;
 			ft_printf("\tway: ");
@@ -119,11 +119,13 @@ void	print_var(t_into *hill)
 int		main(void)
 {
 	t_into	*hill;
+	int		id;
 
+	id = -1;
 	hill = create_hill();
 	parser(hill);
 	fill_matrix(hill);
-	print_matrix(hill);
+//	print_matrix(hill);
 //	if (!find_all_ways(hill))
 //	{
 //		ft_printf("ERROR\n");
@@ -131,11 +133,12 @@ int		main(void)
 //	}
 //	chose_ways(hill);
 	find_ways(hill);
-	print_ways(hill);
-//	find_parallel_ways(hill);
 	choice_variants(hill);
-//	sort_ways(hill);
+	id = best_var_id(hill);
+	print_ways(hill);
 	print_var(hill);
+	ft_printf("\n ANTS: %d", hill->ants);
+	ft_printf("\n ID: %d\n", id);
 //	push_ants(hill);
 //	free_memory(hill);
 //	free(hill);

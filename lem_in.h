@@ -12,6 +12,7 @@
 
 #ifndef LEM_IN_H
 # define LEM_IN_H
+# define INFINITY 100000000
 # define FD 0
 # include "libft/libft.h"
 
@@ -87,5 +88,6 @@ void				choice_variants(t_into *hill);
 
 //int					push_ants(t_into *hill);
 //void				free_memory(t_into *hill);
+int					best_var_id(t_into *hill);
 
 #endif
