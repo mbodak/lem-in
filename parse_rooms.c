@@ -50,20 +50,19 @@ int		add_room(t_into *hill, char **arr)
 	return (len);
 }
 
-int		parse_rooms(t_into *hill, int i, t_command command)
+int		parse_rooms(t_into *hill, int i, t_command command, int len)
 {
 	char	**a;
-	int		len;
 
 	a = ft_strsplit(hill->data[i], ' ');
-	len = 0;
 	while (a[len])
 		len++;
 	if (len != 3 || a[0][0] == '#' || a[0][0] == 'L' || cmp_n(hill, a[0]) != -1)
-		return (0);
+		return (ft_free_arr(a, 0));
 	if (!is_digit(a[1]) || !is_digit(a[2]))
-		return (0);
+		return (ft_free_arr(a, 0));
 	len = add_room(hill, a);
+	ft_free_arr(a, 1);
 	if (command == START)
 	{
 		if (hill->start != -1)
@@ -79,12 +78,12 @@ int		parse_rooms(t_into *hill, int i, t_command command)
 	return (1);
 }
 
-int		parser(t_into *hill)
+int		parser(t_into *hill, int i)
 {
-	int			i;
 	t_command	command;
 
-	i = 0;
+	if (hill->data[0] == NULL)
+		return (0);
 	while (is_comment(hill->data[i]))
 		i++;
 	if (!parse_ants(hill, i))
@@ -94,7 +93,7 @@ int		parser(t_into *hill)
 	if (command)
 		i++;
 	while ((hill->data[i])
-			&& (parse_rooms(hill, i, command) || is_comment(hill->data[i])))
+			&& (parse_rooms(hill, i, command, 0) || is_comment(hill->data[i])))
 	{
 		i++;
 		if (hill->data[i] && (command = is_command(hill->data[i])))
@@ -104,5 +103,5 @@ int		parser(t_into *hill)
 		return (0);
 	while (hill->data[i] && (parse_links(hill, i) || is_comment(hill->data[i])))
 		i++;
-	return (1);
+	return (i);
 }

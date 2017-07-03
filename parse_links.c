@@ -71,7 +71,11 @@ int			parse_links(t_into *hill, int i)
 		len++;
 	if ((len != 2 || cmp_n(hill, arr[0]) == -1)
 		|| (cmp_n(hill, arr[1]) == -1))
+	{
+		ft_free_arr(arr, 0);
 		return (0);
+	}
 	add_link(hill, arr);
+	ft_free_arr(arr, 0);
 	return (1);
 }

@@ -41,3 +41,14 @@ int			is_digit(char *string)
 	}
 	return (1);
 }
+
+int			ft_free_arr(char **arr, int i)
+{
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+	return (0);
+}

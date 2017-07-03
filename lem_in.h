@@ -12,7 +12,7 @@
 
 #ifndef LEM_IN_H
 # define LEM_IN_H
-# define INFINITY 100000000
+# define INFINITY 2147483647
 # define FD 0
 # include "libft/libft.h"
 
@@ -43,19 +43,18 @@ typedef struct		s_way
 	int				c_ants;
 }					t_way;
 
-typedef struct 		s_ant
-{
-	int 			ant_num;
-	int 			room;
-	int 			way_id;
-
-}					t_ant;
-
 typedef struct		s_var
 {
-	int 			*indexes;
-	int 			length;
+	int				*indexes;
+	int				length;
 }					t_var;
+
+typedef struct		s_ant
+{
+	int				ant_num;
+	int				room_id;
+	int				way_id;
+}					t_ant;
 
 typedef struct		s_into
 {
@@ -65,13 +64,14 @@ typedef struct		s_into
 	int				end;
 	t_room			**rooms;
 	t_link			**links;
-//	t_way			**ways;
-	t_way			**tmp_ways;
-	int 			tmp_len;
-	t_var			**var_ways;
-	t_ant			**ants_move;
 	int				**matrix;
 	int				m_len;
+	int				*stack;
+	t_way			**tmp_ways;
+	int				tmp_len;
+	t_var			**var_ways;
+	t_ant			**ants_move;
+	int				steps;
 }					t_into;
 
 int					is_comment(char *string);
@@ -79,15 +79,18 @@ t_command			is_command(char *string);
 int					is_digit(char *string);
 int					parse_links(t_into *hill, int i);
 int					cmp_n(t_into *hill, char *string);
-int					parser(t_into *hill);
+int					parser(t_into *hill, int i);
 void				fill_matrix(t_into *hill);
-void				find_ways(t_into *hill);
-void				find_parallel_ways(t_into *hill);
-//void				sort_ways(t_into *hill);
-void				choice_variants(t_into *hill);
-
-//int					push_ants(t_into *hill);
-//void				free_memory(t_into *hill);
+int					find_ways(t_into *hill);
+void				find_parallel(t_into *hill);
+void				clean_ants(t_into *hill, int index);
+int					shortest_way(t_into *hill, t_var *ways);
+void				give_ants_way_id(t_into *hill);
+int					count_steps(t_into *hill, int index);
 int					best_var_id(t_into *hill);
+void				print_ants(t_into *hill);
+void				free_data(t_into *hill);
+void				free_memory(t_into *hill);
+int					ft_free_arr(char **arr, int i);
 
 #endif

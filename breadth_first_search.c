@@ -12,13 +12,22 @@
 
 #include "lem_in.h"
 
-int		save_way(t_into *hill, int *w, int l)
+t_way	*create_new_way(int l)
 {
-	t_way		*new_way;
-	t_way		**ways;
-	int			len;
+	t_way	*new_way;
 
-	len = 0;
+	new_way = (t_way *)malloc(sizeof(t_way));
+	new_way->way = (int *)malloc(sizeof(int) * (l + 1));
+	new_way->c_ants = 0;
+	new_way->w_len = 0;
+	return (new_way);
+}
+
+int		save_way(t_into *hill, int *w, int l, int len)
+{
+	t_way	*new_way;
+	t_way	**ways;
+
 	while (hill->tmp_ways && hill->tmp_ways[len])
 		len++;
 	ways = (t_way **)malloc(sizeof(t_way *) * (len + 2));
@@ -28,10 +37,7 @@ int		save_way(t_into *hill, int *w, int l)
 		ways[len] = hill->tmp_ways[len];
 		len++;
 	}
-	new_way = (t_way *)malloc(sizeof(t_way));
-	new_way->way = (int *)malloc(sizeof(int) * (l + 1));
-	new_way->c_ants  = 0;
-	new_way->w_len = 0;
+	new_way = create_new_way(l);
 	ways[len + 1] = NULL;
 	while (new_way->w_len <= l)
 	{
@@ -45,32 +51,67 @@ int		save_way(t_into *hill, int *w, int l)
 	return (len + 1);
 }
 
-void		bfs(int v, t_into *hill, int rear, int *stack, int *visited)
+void	bfs(int v, t_into *hill, int rear, int *visited)
 {
 	int		i;
 
 	visited[v] = 1;
-	stack[rear] = v;
+	hill->stack[rear] = v;
 	if (v == hill->end)
-		hill->tmp_len = save_way(hill, stack, rear);
+		hill->tmp_len = save_way(hill, hill->stack, rear, 0);
 	i = 0;
 	while (i < hill->m_len)
 	{
 		if (!visited[i] && hill->matrix[v][i] == 1)
-			bfs(i, hill, rear + 1, stack, visited);
+			bfs(i, hill, rear + 1, visited);
 		i++;
 	}
 	visited[v] = 0;
 }
 
-void		find_ways(t_into *hill)
+void	check_min_way(t_into *hill)
 {
-	int		*stack;
+	int	j;
+	int i;
+
+	i = 0;
+	while (hill->tmp_ways[i])
+	{
+		if (hill->tmp_ways[i]->w_len == 2)
+		{
+			j = 0;
+			while (hill->tmp_ways[j])
+			{
+				if (i != j)
+				{
+					free(hill->tmp_ways[j]->way);
+					free(hill->tmp_ways[j]);
+				}
+				j++;
+			}
+			hill->tmp_ways[0] = hill->tmp_ways[i];
+			hill->tmp_ways[1] = NULL;
+			hill->tmp_len = 1;
+			break ;
+		}
+		i++;
+	}
+}
+
+int		find_ways(t_into *hill)
+{
 	int		*visited;
 
-	stack = (int *)malloc(sizeof(int) * hill->m_len);
+	hill->stack = (int *)malloc(sizeof(int) * hill->m_len);
 	visited = (int *)malloc(sizeof(int) * hill->m_len);
 	ft_memset(visited, 0, ((size_t)hill->m_len * sizeof(int)));
 	hill->tmp_ways = NULL;
-	bfs(hill->start, hill, 0, stack, visited);
+	if (hill->start < 0 || hill->end < 0)
+		return (0);
+	bfs(hill->start, hill, 0, visited);
+	free(visited);
+	if (hill->tmp_ways == NULL)
+		return (0);
+	check_min_way(hill);
+	return (1);
 }

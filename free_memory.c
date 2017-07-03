@@ -12,46 +12,58 @@
 
 #include "lem_in.h"
 
-static void		free_data(t_into *hill)
+static void		free_data_str(t_into *hill)
 {
-	int		i;
+	int	i;
 
 	if (hill->data == NULL)
 		return ;
 	i = 0;
 	while (hill->data && hill->data[i])
-		free(hill->data[i++]);
+	{
+		free(hill->data[i]);
+		i++;
+	}
 	free(hill->data);
 	hill->data = NULL;
 }
 
-static void		free_rooms_links(t_into *hill)
+static void		free_rooms(t_into *hill)
 {
-	int		i;
+	int	i;
 
-	if (hill->rooms == NULL && hill->links == NULL)
+	if (hill->rooms == NULL)
 		return ;
 	i = 0;
-	if (hill->rooms != NULL)
+	while (hill->rooms && hill->rooms[i])
 	{
-		while (hill->rooms && hill->rooms[i])
-			free(hill->rooms[i++]);
-		free(hill->rooms);
-		hill->rooms = NULL;
+		free(hill->rooms[i]->name);
+		free(hill->rooms[i]);
+		i++;
 	}
-	if (hill->links != NULL)
+	free(hill->rooms);
+	hill->rooms = NULL;
+}
+
+static void		free_links(t_into *hill)
+{
+	int	i;
+
+	if (hill->links == NULL)
+		return ;
+	i = 0;
+	while (hill->links && hill->links[i])
 	{
-		i = 0;
-		while (hill->links && hill->links[i])
-			free(hill->links[i++]);
-		free(hill->links);
-		hill->links = NULL;
+		free(hill->links[i]);
+		i++;
 	}
+	free(hill->links);
+	hill->links = NULL;
 }
 
 static void		free_matrix(t_into *hill)
 {
-	int		i;
+	int	i;
 
 	if (hill->matrix == NULL)
 		return ;
@@ -62,20 +74,10 @@ static void		free_matrix(t_into *hill)
 	hill->matrix = NULL;
 }
 
-static void		free_tmp_ways(t_into *hill)
+void			free_data(t_into *hill)
 {
-
-}
-
-static void		free_var_ways(t_into *hill)
-{
-
-}
-
-void	free_memory(t_into *hill)
-{
-	free_data(hill);
-	free_rooms_links(hill);
+	free_data_str(hill);
+	free_rooms(hill);
+	free_links(hill);
 	free_matrix(hill);
 }
-
